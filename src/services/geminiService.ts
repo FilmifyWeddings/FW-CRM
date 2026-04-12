@@ -6,10 +6,20 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Lead } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const getAI = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn("GEMINI_API_KEY is missing. AI features will be disabled.");
+    return null;
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export async function analyzeLead(lead: Lead) {
   try {
+    const ai = getAI();
+    if (!ai) return { score: 0, summary: "AI Key missing" };
+    
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash-exp",
       contents: [
@@ -47,6 +57,9 @@ export async function analyzeLead(lead: Lead) {
 
 export async function suggestFollowUp(lead: Lead) {
   try {
+    const ai = getAI();
+    if (!ai) return "AI Key missing. Please configure GEMINI_API_KEY.";
+    
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash-exp",
       contents: [
