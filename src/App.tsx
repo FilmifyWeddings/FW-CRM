@@ -81,25 +81,20 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-background p-8">
-          <Card className="max-w-md w-full border-destructive/50">
-            <CardHeader>
-              <CardTitle className="text-destructive flex items-center gap-2">
-                <Trash2 size={24} /> Application Error
-              </CardTitle>
-              <CardDescription>
-                Something went wrong while rendering the app.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 bg-destructive/10 rounded-xl text-xs font-mono overflow-auto max-h-40">
-                {this.state.error?.message}
-              </div>
-              <Button className="w-full" onClick={() => window.location.reload()}>
-                Reload App
-              </Button>
-            </CardContent>
-          </Card>
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', padding: '20px', fontFamily: 'sans-serif' }}>
+          <div style={{ maxWidth: '400px', width: '100%', border: '1px solid #fee2e2', borderRadius: '12px', padding: '24px', background: '#fef2f2' }}>
+            <h2 style={{ color: '#ef4444', marginTop: 0 }}>App Crash</h2>
+            <p style={{ color: '#666', fontSize: '14px' }}>Something went wrong while rendering the app.</p>
+            <div style={{ padding: '12px', background: 'rgba(0,0,0,0.05)', borderRadius: '8px', fontSize: '12px', fontFamily: 'monospace', overflow: 'auto', maxHeight: '150px', marginBottom: '16px' }}>
+              {this.state.error?.message}
+            </div>
+            <button 
+              onClick={() => window.location.reload()}
+              style={{ width: '100%', padding: '10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              Reload App
+            </button>
+          </div>
         </div>
       );
     }
