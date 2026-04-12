@@ -64,6 +64,50 @@ import { format } from 'date-fns';
 
 // --- Components ---
 
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("ErrorBoundary caught an error", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background p-8">
+          <Card className="max-w-md w-full border-destructive/50">
+            <CardHeader>
+              <CardTitle className="text-destructive flex items-center gap-2">
+                <Trash2 size={24} /> Application Error
+              </CardTitle>
+              <CardDescription>
+                Something went wrong while rendering the app.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-destructive/10 rounded-xl text-xs font-mono overflow-auto max-h-40">
+                {this.state.error?.message}
+              </div>
+              <Button className="w-full" onClick={() => window.location.reload()}>
+                Reload App
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) => {
   const items = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -193,6 +237,14 @@ const LeadCard = ({ lead, onClick, onDelete }: { lead: Lead, onClick: () => void
 // --- Main App ---
 
 export default function App() {
+  return (
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
+  );
+}
+
+function AppContent() {
   const [activeTab, setActiveTab] = useState('leads');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [leads, setLeads] = useState<Lead[]>([]);
